@@ -7,11 +7,30 @@ use MortenDHansen\LaravelDatabaseTranslations\DatabaseTranslationsServiceProvide
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
+    /**
+     * @return void
+     */
+    public function removeTestLangFiles(): void
+    {
+        $files = glob(__DIR__ . '/lang/*');
+        foreach ($files as $file) {
+            if (is_file($file)) {
+                unlink($file);
+            }
+        }
+    }
+
     public function setUp(): void
     {
         parent::setUp();
         // additional setup
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        $this->removeTestLangFiles();
     }
 
     protected function getPackageProviders($app)
@@ -38,7 +57,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
     /**
      * Get package providers.
      *
-     * @param  \Illuminate\Foundation\Application  $app
+     * @param \Illuminate\Foundation\Application $app
      *
      * @return array
      */
@@ -48,4 +67,13 @@ class TestCase extends \Orchestra\Testbench\TestCase
             'Illuminate\Translation\TranslationServiceProvider' => 'MortenDHansen\LaravelDatabaseTranslations\DatabaseTranslationsServiceProvider',
         ];
     }
+
+    public function addTranslationFile(array $content = null)
+    {
+        if (is_null($content)) {
+            $content = [];
+        }
+        file_put_contents(__DIR__.'/lang/en.json', json_encode($content));
+    }
+
 }

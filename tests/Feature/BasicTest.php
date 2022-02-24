@@ -39,8 +39,9 @@ class BasicTest extends \MortenDHansen\LaravelDatabaseTranslations\Tests\TestCas
      */
     public function itReturnsTranslatedStringIfTranslationFileIsPresent()
     {
-        $this->assertEquals('value', __('key'));
-        $this->assertEquals('value', trans('key'));
+        $this->addTranslationFile(['salad' => 'blue']);
+        $this->assertEquals('blue', __('salad'));
+        $this->assertEquals('blue', trans('salad'));
     }
 
     /**

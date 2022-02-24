@@ -2,6 +2,7 @@
 
 namespace MortenDHansen\LaravelDatabaseTranslations;
 
+use Illuminate\Translation\FileLoader;
 use Illuminate\Translation\TranslationServiceProvider;
 
 class DatabaseTranslationsServiceProvider extends TranslationServiceProvider
@@ -33,8 +34,12 @@ class DatabaseTranslationsServiceProvider extends TranslationServiceProvider
      */
     protected function registerLoader()
     {
-        $this->app->singleton('translation.loader', function ($app) {
-            return new DatabaseTranslationsLoader($app['files'], $app['path.lang']);
+        $this->app->singleton('translation.loader', function () {
+            return new DatabaseTranslationsLoader();
+        });
+
+        $this->app->singleton('translation.file-loader', function ($app) {
+            return new FileLoader($app['files'], $app['path.lang']);
         });
     }
 
