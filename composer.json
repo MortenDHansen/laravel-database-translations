@@ -1,0 +1,36 @@
+{
+    "name": "mortendhansen/laravel-database-translations",
+    "description": "Managing laravel translations in database",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Morten D. Hansen",
+            "email": "morten@visia.dk"
+        }
+    ],
+    "require": {
+        "php": "^8.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^7.0",
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "MortenDHansen\\LaravelDatabaseTranslations\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MortenDHansen\\LaravelDatabaseTranslations\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "MortenDHansen\\LaravelDatabaseTranslations\\DatabaseTranslationsServiceProvider"
+            ]
+        }
+    }
+}
