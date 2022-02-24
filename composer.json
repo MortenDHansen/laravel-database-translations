@@ -18,7 +18,8 @@
     },
     "autoload": {
         "psr-4": {
-            "MortenDHansen\\LaravelDatabaseTranslations\\": "src/"
+            "MortenDHansen\\LaravelDatabaseTranslations\\": "src/",
+            "MortenDHansen\\LaravelDatabaseTranslations\\Database\\Factories\\": "database/Factories"
         }
     },
     "autoload-dev": {

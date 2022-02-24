@@ -2,6 +2,7 @@
 
 namespace MortenDHansen\LaravelDatabaseTranslations\Tests;
 
+use Illuminate\Support\Facades\Config;
 use MortenDHansen\LaravelDatabaseTranslations\DatabaseTranslationsServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
@@ -10,6 +11,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
     {
         parent::setUp();
         // additional setup
+        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
     }
 
     protected function getPackageProviders($app)
@@ -21,7 +23,16 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
     protected function getEnvironmentSetUp($app)
     {
-        // perform environment setup
+        // Database
+        $app['config']->set('database.default', 'testing');
+        $app['config']->set('database.connections.testing', [
+            'driver'   => 'sqlite',
+            'database' => ':memory:',
+            'prefix'   => '',
+        ]);
+        $app['config']->set('locale', 'en');
+        $app['config']->set('fallback_locale', 'en');
+        $app['path.lang'] = __DIR__ . '/lang';
     }
 
     /**
