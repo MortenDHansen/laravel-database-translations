@@ -194,5 +194,35 @@ class DatabaseTranslationsTest extends \MortenDHansen\LaravelDatabaseTranslation
         $this->assertArrayHasKey('someotherkey', $result);
     }
 
+    /**
+     * @test
+     * @return void
+     */
+    public function itFiguresOutMixedCaseKeys()
+    {
+        __('Im an annoying Key!');
+        $this->assertDatabaseHas('database_lang_items', ['group' => '*', 'key' => 'Im an annoying Key!', 'locale' => 'en']);
+        $line = DatabaseLangItem::where('key', 'Im an annoying Key!')->first();
+        $line->value = 'blabla';
+        $line->save();
+        cache()->forget(DatabaseTranslationsLoader::getCacheKey('*', 'en'));
+        $this->assertEquals('blabla', __('Im an annoying Key!'));
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function itFiguresOutMixedCaseGroupedKeys()
+    {
+        __('metallica.Im an annoying Key!');
+        $this->assertDatabaseHas('database_lang_items', ['group' => 'metallica', 'key' => 'Im an annoying Key!', 'locale' => 'en']);
+        $line = DatabaseLangItem::where('key', 'Im an annoying Key!')->where('group', 'metallica')->first();
+        $line->value = 'blabla';
+        $line->save();
+        cache()->forget(DatabaseTranslationsLoader::getCacheKey('metallica', 'en'));
+        $this->assertEquals('blabla', __('metallica.Im an annoying Key!'));
+    }
+
 
 }

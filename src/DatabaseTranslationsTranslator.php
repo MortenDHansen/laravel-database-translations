@@ -39,9 +39,9 @@ class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
                 if (! is_null($line = $this->getLine(
                     $namespace, $group, $locale, $item, $replace
                 ))) {
-                    $loadedDbTranslation = $this->loader->dbTranslations[$group][$locale][$item] ?? null;
-                    if(is_null($loadedDbTranslation)) {
-                        if($this->loader->createMissing($group, $locale, $item)) {
+                    $dbLoadedKey = array_key_exists($item, $this->loader->dbTranslations[$group][$passedLocale]);
+                    if(!$dbLoadedKey) {
+                        if($this->loader->createMissing($group, $passedLocale, $item)) {
                             $this->loaded = [];
                         }
                     }
@@ -49,9 +49,14 @@ class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
                 }
             }
         }
-        $dbLoadedKey = array_key_exists($key, $this->loader->dbTranslations['*'][$locale]);
+
+        if(! isset($item)) {
+            $item = $key;
+            $group = '*';
+        }
+        $dbLoadedKey = array_key_exists($item, $this->loader->dbTranslations[$group][$passedLocale]);
         if(!$dbLoadedKey) {
-            if($this->loader->createMissing('*', $passedLocale, $key)) {
+            if($this->loader->createMissing($group, $passedLocale, $item)) {
                 $this->loaded = [];
             }
         }
