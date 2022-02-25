@@ -55,19 +55,7 @@ class DatabaseTranslationsLoader implements Loader
      */
     public function getDbTranslations(string $group, string $locale)
     {
-        $cacheKey = $this->getCacheKey($group, $locale);
-        if(!cache()->has($cacheKey)) {
-            $dbTranslations = DatabaseLangItem::where('group', $group)
-                ->where('locale', $locale)
-                ->get()
-                ->mapWithKeys(function (DatabaseLangItem $langItem
-                ) {
-                    return [$langItem->key => $langItem->value];
-                })
-                ->toArray();
-            cache()->set($cacheKey, $dbTranslations, Carbon::now()->addDay());
-        }
-        $this->dbTranslations = cache()->get($cacheKey);
+        $this->dbTranslations = DatabaseLangItem::getByGroupAndLocale($group, $locale);
 
         return array_filter($this->dbTranslations, function ($translationItemValue, $translationItemKey) {
             return !is_null($translationItemValue);
