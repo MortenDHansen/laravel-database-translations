@@ -68,12 +68,12 @@ class TestCase extends \Orchestra\Testbench\TestCase
         ];
     }
 
-    public function addTranslationFile(array $content = null)
+    public function addTranslationFile(array $content = null, $locale = 'en')
     {
         if (is_null($content)) {
             $content = [];
         }
-        file_put_contents(__DIR__.'/lang/en.json', json_encode($content));
+        file_put_contents(__DIR__.'/lang/'.$locale.'.json', json_encode($content));
     }
 
 }

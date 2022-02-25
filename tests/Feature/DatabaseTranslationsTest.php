@@ -31,6 +31,34 @@ class DatabaseTranslationsTest extends \MortenDHansen\LaravelDatabaseTranslation
      * @test
      * @return void
      */
+    public function itLoadsTranslationFromDatabaseInDifferentLocales()
+    {
+        $this->addTranslationFile(['salad' => 'blue']);
+        $this->addTranslationFile(['salad' => 'schwarz'], 'de');
+        DatabaseLangItem::factory()->create([
+            'group' => '*',
+            'key' => 'salad',
+            'value' => 'green',
+            'locale' => 'en'
+        ]);
+        DatabaseLangItem::factory()->create([
+            'group' => '*',
+            'key' => 'salad',
+            'value' => 'schwarz',
+            'locale' => 'de'
+        ]);
+
+        $this->assertEquals('green', __('salad'));
+
+        app()->setLocale('de');
+
+        $this->assertEquals('schwarz', __('salad'));
+    }
+
+    /**
+     * @test
+     * @return void
+     */
     public function itLoadsTranslationFromFile()
     {
         // file says salad is blue
@@ -118,5 +146,21 @@ class DatabaseTranslationsTest extends \MortenDHansen\LaravelDatabaseTranslation
         $translated = __('current_password');
         $this->assertDatabaseHas('database_lang_items', ['group' => '*', 'key' => 'current_password']);
     }
+    /**
+     * @test
+     * @return void
+     */
+    public function itCreatesMissingKeysInDifferentLocales()
+    {
+        $translated = __('color');
+        $this->assertDatabaseHas('database_lang_items', ['group' => '*', 'key' => 'color', 'locale' => 'en']);
+
+        app()->setLocale('de');
+
+        $translated = __('color');
+        $this->assertDatabaseHas('database_lang_items', ['group' => '*', 'key' => 'color', 'locale' => 'de']);
+
+    }
+
 
 }

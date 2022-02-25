@@ -19,6 +19,7 @@ class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
     public function get($key, array $replace = [], $locale = null, $fallback = true)
     {
         $locale = $locale ?: $this->locale;
+        $passedLocale = $locale;
 
         // For JSON translations, there is only one file per locale, so we will simply load
         // that file and then we will be ready to check the array for the key. These are
@@ -55,7 +56,7 @@ class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
 
         $dbLoadedKey = array_key_exists($key, $this->loader->dbTranslations);
         if(!$dbLoadedKey) {
-            if($this->loader->createMissing('*', $locale, $key)) {
+            if($this->loader->createMissing('*', $passedLocale, $key)) {
                 $this->loaded = [];
             }
         }
