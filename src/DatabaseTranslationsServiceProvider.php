@@ -48,7 +48,7 @@ class DatabaseTranslationsServiceProvider extends TranslationServiceProvider
         if ($this->app->runningInConsole()) {
             $destination = database_path('migrations/' . date('Y_m_d_His', time()) . '_create_database_language_items_table.php');
             $this->publishes([
-                __DIR__ . '/../database/migrations/create_database_language_items_table.php.stub' => $destination,
+                __DIR__ . '/database/migrations/create_database_language_items_table.php.stub' => $destination,
             ], 'migrations');
         }
     }
