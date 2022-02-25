@@ -51,6 +51,10 @@ class TestCase extends \Orchestra\Testbench\TestCase
         ]);
         $app['config']->set('locale', 'en');
         $app['config']->set('fallback_locale', 'en');
+        $app['config']->set('cache.file', [
+            'driver' => 'file',
+            'path' => __DIR__ . '/temp/cache'
+        ]);
         $app['path.lang'] = __DIR__ . '/lang';
     }
 

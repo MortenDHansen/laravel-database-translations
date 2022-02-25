@@ -13,13 +13,14 @@ class DatabaseLangItem extends \Illuminate\Database\Eloquent\Model
     protected $fillable = [
         'group',
         'key',
-        'locale'
+        'locale',
+        'value'
     ];
 
     public static function createLanguageItem($group, $key, $locale): DatabaseLangItem
     {
         /** @var DatabaseLangItem $lineItem */
-        $lineItem = self::updateOrCreate([
+        $lineItem = self::create([
             'group'  => $group,
             'key'    => $key,
             'locale' => $locale,
@@ -42,8 +43,8 @@ class DatabaseLangItem extends \Illuminate\Database\Eloquent\Model
     public static function getByGroupAndLocale(string $group, string $locale, int|\DateTimeInterface $cacheTtl = null): array
     {
         $cacheKey = DatabaseTranslationsLoader::getCacheKey($group, $locale);
-        if(!cache()->has($cacheKey)) {
-            $dbTranslations = DatabaseLangItem::where('group', $group)
+        return cache()->remember($cacheKey, Carbon::now()->addDay(), function () use ($group, $locale) {
+            return DatabaseLangItem::where('group', $group)
                 ->where('locale', $locale)
                 ->get()
                 ->mapWithKeys(function (DatabaseLangItem $langItem
@@ -51,9 +52,7 @@ class DatabaseLangItem extends \Illuminate\Database\Eloquent\Model
                     return [$langItem->key => $langItem->value];
                 })
                 ->toArray();
-            cache()->set($cacheKey, $dbTranslations, Carbon::now()->addDay());
-        }
-        return cache()->get($cacheKey);
+        });
     }
 
     protected static function newFactory()

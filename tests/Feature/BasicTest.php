@@ -37,6 +37,16 @@ class BasicTest extends \MortenDHansen\LaravelDatabaseTranslations\Tests\TestCas
      * @test
      * @return void
      */
+    public function testCachesValues()
+    {
+        cache()->set('somekey', 'somevalue');
+        $this->assertEquals('somevalue', cache()->get('somekey'));
+    }
+
+    /**
+     * @test
+     * @return void
+     */
     public function itReturnsTranslatedStringIfTranslationFileIsPresent()
     {
         $this->addTranslationFile(['salad' => 'blue']);

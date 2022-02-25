@@ -104,6 +104,11 @@ class DatabaseTranslationsTest extends \MortenDHansen\LaravelDatabaseTranslation
             'group' => 'validation',
             'locale' => 'en'
         ]);
+        $this->assertDatabaseHas('database_lang_items', [
+            'group' => 'validation',
+            'locale' => 'en',
+            'key' => 'current_password'
+        ]);
 
         $this->assertEquals('Database has a different opinion!', __('validation.current_password'));
     }
@@ -160,6 +165,33 @@ class DatabaseTranslationsTest extends \MortenDHansen\LaravelDatabaseTranslation
         $translated = __('color');
         $this->assertDatabaseHas('database_lang_items', ['group' => '*', 'key' => 'color', 'locale' => 'de']);
 
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function loaderReturnsItemsWhichHasValue()
+    {
+        DatabaseLangItem::create([
+            'group' => '*',
+            'locale' => 'en',
+            'key' => 'somekey'
+        ]);
+
+        DatabaseLangItem::create([
+            'group' => '*',
+            'locale' => 'en',
+            'key' => 'someotherkey',
+            'value' => 'withvalue'
+        ]);
+
+        $loader = new DatabaseTranslationsLoader();
+        $result = $loader->getDbTranslations('*', 'en');
+        $this->assertCount(1, $result);
+        $this->assertCount(2, $loader->dbTranslations['*']['en']);
+        $this->assertArrayNotHasKey('somekey', $result);
+        $this->assertArrayHasKey('someotherkey', $result);
     }
 
 

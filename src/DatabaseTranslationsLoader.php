@@ -55,9 +55,9 @@ class DatabaseTranslationsLoader implements Loader
      */
     public function getDbTranslations(string $group, string $locale)
     {
-        $this->dbTranslations = DatabaseLangItem::getByGroupAndLocale($group, $locale);
+        $this->dbTranslations[$group][$locale] = DatabaseLangItem::getByGroupAndLocale($group, $locale);
 
-        return array_filter($this->dbTranslations, function ($translationItemValue, $translationItemKey) {
+        return array_filter($this->dbTranslations[$group][$locale], function ($translationItemValue, $translationItemKey) {
             return !is_null($translationItemValue);
         }, ARRAY_FILTER_USE_BOTH);
     }
