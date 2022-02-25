@@ -73,7 +73,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
         if (is_null($content)) {
             $content = [];
         }
-        file_put_contents(__DIR__.'/lang/'.$locale.'.json', json_encode($content));
+        file_put_contents(__DIR__ . '/lang/' . $locale . '.json', json_encode($content));
     }
 
 }

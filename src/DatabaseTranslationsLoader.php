@@ -2,6 +2,7 @@
 
 namespace MortenDHansen\LaravelDatabaseTranslations;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Translation\Loader;
 use MortenDHansen\LaravelDatabaseTranslations\Models\DatabaseLangItem;
 
@@ -54,28 +55,39 @@ class DatabaseTranslationsLoader implements Loader
      */
     public function getDbTranslations(string $group, string $locale)
     {
-        $dbTranslations = DatabaseLangItem::where('group', $group)
-            ->where('locale', $locale)
-            ->get()
-            ->mapWithKeys(function (DatabaseLangItem $langItem
-            ) {
-                return [$langItem->key => $langItem->value];
-            })
-            ->toArray();
+        $cacheKey = $this->getCacheKey($group, $locale);
+        if(!cache()->has($cacheKey)) {
+            $dbTranslations = DatabaseLangItem::where('group', $group)
+                ->where('locale', $locale)
+                ->get()
+                ->mapWithKeys(function (DatabaseLangItem $langItem
+                ) {
+                    return [$langItem->key => $langItem->value];
+                })
+                ->toArray();
+            cache()->set($cacheKey, $dbTranslations, Carbon::now()->addDay());
+        }
+        $this->dbTranslations = cache()->get($cacheKey);
 
-        $this->dbTranslations = $dbTranslations;
-
-        return array_filter($dbTranslations, function ($translationItemValue, $translationItemKey) {
+        return array_filter($this->dbTranslations, function ($translationItemValue, $translationItemKey) {
             return !is_null($translationItemValue);
         }, ARRAY_FILTER_USE_BOTH);
     }
 
     public function createMissing(string $group, string $locale, string $key): bool
     {
-        return DatabaseLangItem::updateOrCreate([
-            'group' => $group,
-            'locale' => $locale,
-            'key' => $key
-        ])->wasRecentlyCreated;
+        return DatabaseLangItem::createLanguageItem(
+            $group,
+            $key,
+            $locale,
+        )->wasRecentlyCreated;
+    }
+
+    public static function getCacheKey(string $group, string $locale)
+    {
+        if($group == '*') {
+            $group = 'ungrouped';
+        }
+        return 'laravel-db-translations.'. $locale . '.'. $group;
     }
 }

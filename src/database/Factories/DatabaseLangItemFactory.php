@@ -17,7 +17,7 @@ class DatabaseLangItemFactory extends \Illuminate\Database\Eloquent\Factories\Fa
         return [
             'locale' => $this->faker->randomElement(['en', 'da', 'de']),
             'group' => $this->faker->optional(0.4, '*')->randomElement(['empire', 'rebellion']),
-            'key' => $this->faker->word(),
+            'key' => $this->faker->unique()->word(),
             'value' => $this->faker->word(),
         ];
     }
