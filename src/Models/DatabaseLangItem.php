@@ -8,6 +8,11 @@ use MortenDHansen\LaravelDatabaseTranslations\database\Factories\DatabaseLangIte
 class DatabaseLangItem extends \Illuminate\Database\Eloquent\Model
 {
     use HasFactory;
+    protected $fillable = [
+        'group',
+        'key',
+        'locale'
+    ];
 
     protected static function newFactory()
     {
