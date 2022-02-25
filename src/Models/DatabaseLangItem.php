@@ -20,7 +20,7 @@ class DatabaseLangItem extends \Illuminate\Database\Eloquent\Model
     public static function createLanguageItem($group, $key, $locale): DatabaseLangItem
     {
         /** @var DatabaseLangItem $lineItem */
-        $lineItem = self::create([
+        $lineItem = self::firstOrCreate([
             'group'  => $group,
             'key'    => $key,
             'locale' => $locale,
