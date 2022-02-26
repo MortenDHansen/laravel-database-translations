@@ -25,6 +25,8 @@ class DatabaseTranslationsServiceProvider extends TranslationServiceProvider
 
             return $trans;
         });
+
+        $this->mergeConfigFrom(__DIR__ . '/../config/translations-database.php', 'translation-database');
     }
 
     /**
