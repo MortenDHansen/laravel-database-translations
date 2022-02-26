@@ -2,8 +2,6 @@
 
 namespace MortenDHansen\LaravelDatabaseTranslations;
 
-use Illuminate\Support\Arr;
-
 class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
 {
 
@@ -41,9 +39,8 @@ class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
                 ))) {
                     $dbLoadedKey = array_key_exists($item, $this->loader->dbTranslations[$group][$passedLocale]);
                     if(!$dbLoadedKey) {
-                        if($this->loader->createMissing($group, $passedLocale, $item)) {
-                            $this->loaded = [];
-                        }
+                        app('dbtrans')->createLanguageItem($group, $item, $passedLocale);
+                        $this->loaded = [];
                     }
                     return $line;
                 }
@@ -56,9 +53,8 @@ class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
         }
         $dbLoadedKey = array_key_exists($item, $this->loader->dbTranslations[$group][$passedLocale]);
         if(!$dbLoadedKey) {
-            if($this->loader->createMissing($group, $passedLocale, $item)) {
-                $this->loaded = [];
-            }
+            app('dbtrans')->createLanguageItem($group, $item, $passedLocale);
+            $this->loaded = [];
         }
 
         // If the line doesn't exist, we will return back the key which was requested as

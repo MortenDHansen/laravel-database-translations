@@ -76,10 +76,10 @@ class DatabaseTranslationsTest extends \MortenDHansen\LaravelDatabaseTranslation
         $this->addTranslationFile(['salad' => 'blue']);
         $this->assertEquals('blue', __('salad'));
 
+        $this->assertDatabaseHas('database_lang_items', ['group' => '*', 'locale' => 'en', 'key' => 'salad']);
         $langLine = DatabaseLangItem::where('key', 'salad')->first();
         $langLine->value = 'green';
         $langLine->save();
-
         $this->assertEquals('green', __('salad'));
     }
 
@@ -200,12 +200,13 @@ class DatabaseTranslationsTest extends \MortenDHansen\LaravelDatabaseTranslation
      */
     public function itFiguresOutMixedCaseKeys()
     {
+        $key = app('dbtrans')->getCacheKey('*', 'en');
         __('Im an annoying Key!');
         $this->assertDatabaseHas('database_lang_items', ['group' => '*', 'key' => 'Im an annoying Key!', 'locale' => 'en']);
         $line = DatabaseLangItem::where('key', 'Im an annoying Key!')->first();
         $line->value = 'blabla';
         $line->save();
-        cache()->forget(DatabaseTranslationsLoader::getCacheKey('*', 'en'));
+        cache()->forget($key);
         $this->assertEquals('blabla', __('Im an annoying Key!'));
     }
 
@@ -216,11 +217,13 @@ class DatabaseTranslationsTest extends \MortenDHansen\LaravelDatabaseTranslation
     public function itFiguresOutMixedCaseGroupedKeys()
     {
         __('metallica.Im an annoying Key!');
-        $this->assertDatabaseHas('database_lang_items', ['group' => 'metallica', 'key' => 'Im an annoying Key!', 'locale' => 'en']);
+        $this->assertDatabaseHas('database_lang_items',
+            ['group' => 'metallica', 'key' => 'Im an annoying Key!', 'locale' => 'en']);
         $line = DatabaseLangItem::where('key', 'Im an annoying Key!')->where('group', 'metallica')->first();
         $line->value = 'blabla';
         $line->save();
-        cache()->forget(DatabaseTranslationsLoader::getCacheKey('metallica', 'en'));
+        cache()->forget(app('dbtrans')->getCacheKey('metalica', 'en'));
+
         $this->assertEquals('blabla', __('metallica.Im an annoying Key!'));
     }
 
