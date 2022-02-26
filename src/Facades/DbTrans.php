@@ -22,7 +22,7 @@ class DbTrans
         });
     }
 
-    public function getCacheKey(string $group, string $locale): string
+    public static function getCacheKey(string $group, string $locale): string
     {
         if ($group == '*') {
             $group = 'ungrouped';

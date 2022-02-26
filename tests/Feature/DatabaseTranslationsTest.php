@@ -4,6 +4,7 @@ namespace MortenDHansen\LaravelDatabaseTranslations\Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use MortenDHansen\LaravelDatabaseTranslations\DatabaseTranslationsLoader;
+use MortenDHansen\LaravelDatabaseTranslations\Facades\DbTrans;
 use MortenDHansen\LaravelDatabaseTranslations\Models\DatabaseLangItem;
 
 class DatabaseTranslationsTest extends \MortenDHansen\LaravelDatabaseTranslations\Tests\TestCase
@@ -222,7 +223,7 @@ class DatabaseTranslationsTest extends \MortenDHansen\LaravelDatabaseTranslation
         $line = DatabaseLangItem::where('key', 'Im an annoying Key!')->where('group', 'metallica')->first();
         $line->value = 'blabla';
         $line->save();
-        cache()->forget(app('dbtrans')->getCacheKey('metalica', 'en'));
+        cache()->forget(DbTrans::getCacheKey('metalica', 'en'));
 
         $this->assertEquals('blabla', __('metallica.Im an annoying Key!'));
     }

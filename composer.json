@@ -1,37 +1,40 @@
 {
-    "name": "mortendhansen/laravel-database-translations",
-    "description": "Managing laravel translations in database",
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Morten D. Hansen",
-            "email": "morten@visia.dk"
-        }
-    ],
-    "require": {
-        "php": "^8.0",
-        "illuminate/support": "^9.0"
-    },
-    "support": {
-        "issues": "https://github.com/MortenDHansen/laravel-database-translations/issues",
-        "source": "https://github.com/MortenDHansen/laravel-database-translations"
-    },
-    "require-dev": {
-        "orchestra/testbench": "^7.0",
-        "phpunit/phpunit": "^9.5"
-    },
-    "autoload": {
-        "psr-4": {
-            "MortenDHansen\\LaravelDatabaseTranslations\\": "src/",
-            "MortenDHansen\\LaravelDatabaseTranslations\\Database\\Factories\\": "database/Factories"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "MortenDHansen\\LaravelDatabaseTranslations\\Tests\\": "tests"
-        }
-    },
-    "extra": {
+  "name": "mortendhansen/laravel-database-translations",
+  "description": "Managing laravel translations in database",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Morten D. Hansen",
+      "email": "morten@visia.dk"
     }
+  ],
+  "require": {
+    "php": "^8.0",
+    "illuminate/support": "^9.0"
+  },
+  "support": {
+    "issues": "https://github.com/MortenDHansen/laravel-database-translations/issues",
+    "source": "https://github.com/MortenDHansen/laravel-database-translations"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^7.0",
+    "phpunit/phpunit": "^9.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "MortenDHansen\\LaravelDatabaseTranslations\\": "src/",
+      "MortenDHansen\\LaravelDatabaseTranslations\\Database\\Factories\\": "database/Factories"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "MortenDHansen\\LaravelDatabaseTranslations\\Tests\\": "tests"
+    }
+  },
+  "extra": {
+    "aliases": {
+      "DbTrans": "MortenDHansen\\LaravelDatabaseTranslations\\Facades\\DatabaseTranslationsFacade"
+    }
+  }
 }
