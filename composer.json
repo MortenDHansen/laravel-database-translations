@@ -13,6 +13,10 @@
         "php": "^8.0",
         "illuminate/support": "^9.0"
     },
+    "support": {
+        "issues": "https://github.com/MortenDHansen/laravel-database-translations/issues",
+        "source": "https://github.com/MortenDHansen/laravel-database-translations"
+    },
     "require-dev": {
         "orchestra/testbench": "^7.0",
         "phpunit/phpunit": "^9.5"

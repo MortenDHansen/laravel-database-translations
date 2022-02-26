@@ -4,6 +4,7 @@ namespace MortenDHansen\LaravelDatabaseTranslations;
 
 use Illuminate\Translation\FileLoader;
 use Illuminate\Translation\TranslationServiceProvider;
+use MortenDHansen\LaravelDatabaseTranslations\Facades\DbTrans;
 
 class DatabaseTranslationsServiceProvider extends TranslationServiceProvider
 {
@@ -27,6 +28,10 @@ class DatabaseTranslationsServiceProvider extends TranslationServiceProvider
         });
 
         $this->mergeConfigFrom(__DIR__ . '/../config/translations-database.php', 'translation-database');
+
+        $this->app->singleton('dbtrans', function ($app) {
+            return new DbTrans($app);
+        });
     }
 
     /**
