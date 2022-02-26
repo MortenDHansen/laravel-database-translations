@@ -3,6 +3,7 @@
 namespace MortenDHansen\LaravelDatabaseTranslations\Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use MortenDHansen\LaravelDatabaseTranslations\Contracts\DbTrans;
 use MortenDHansen\LaravelDatabaseTranslations\DatabaseTranslationsLoader;
 use MortenDHansen\LaravelDatabaseTranslations\DatabaseTranslationsTranslator;
 use MortenDHansen\LaravelDatabaseTranslations\Models\DatabaseLangItem;
@@ -62,6 +63,16 @@ class BasicTest extends \MortenDHansen\LaravelDatabaseTranslations\Tests\TestCas
     {
         DatabaseLangItem::factory()->count(10)->create();
         $this->assertDatabaseCount('database_lang_items', 10);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function canUseFacade()
+    {
+        $facade = app('dbtrans');
+        $this->assertInstanceOf(\MortenDHansen\LaravelDatabaseTranslations\Facades\DbTrans::class, $facade);
     }
 
 }

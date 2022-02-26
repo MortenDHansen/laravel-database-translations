@@ -2,9 +2,7 @@
 
 namespace MortenDHansen\LaravelDatabaseTranslations;
 
-use Carbon\Carbon;
 use Illuminate\Contracts\Translation\Loader;
-use MortenDHansen\LaravelDatabaseTranslations\Models\DatabaseLangItem;
 
 class DatabaseTranslationsLoader implements Loader
 {
@@ -55,27 +53,12 @@ class DatabaseTranslationsLoader implements Loader
      */
     public function getDbTranslations(string $group, string $locale)
     {
-        $this->dbTranslations[$group][$locale] = DatabaseLangItem::getByGroupAndLocale($group, $locale);
+        $databaseTranslations = app('dbtrans')->getDatabaseTranslations($group, $locale);
+        $this->dbTranslations[$group][$locale] = $databaseTranslations;
 
-        return array_filter($this->dbTranslations[$group][$locale], function ($translationItemValue, $translationItemKey) {
-            return !is_null($translationItemValue);
-        }, ARRAY_FILTER_USE_BOTH);
-    }
-
-    public function createMissing(string $group, string $locale, string $key): bool
-    {
-        return DatabaseLangItem::createLanguageItem(
-            $group,
-            $key,
-            $locale,
-        )->wasRecentlyCreated;
-    }
-
-    public static function getCacheKey(string $group, string $locale)
-    {
-        if($group == '*') {
-            $group = 'ungrouped';
-        }
-        return 'laravel-db-translations.'. $locale . '.'. $group;
+        return array_filter($this->dbTranslations[$group][$locale],
+            function ($translationItemValue, $translationItemKey) {
+                return !is_null($translationItemValue);
+            }, ARRAY_FILTER_USE_BOTH);
     }
 }

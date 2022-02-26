@@ -4,6 +4,7 @@ namespace MortenDHansen\LaravelDatabaseTranslations;
 
 use Illuminate\Translation\FileLoader;
 use Illuminate\Translation\TranslationServiceProvider;
+use MortenDHansen\LaravelDatabaseTranslations\Facades\DbTrans;
 
 class DatabaseTranslationsServiceProvider extends TranslationServiceProvider
 {
@@ -24,6 +25,12 @@ class DatabaseTranslationsServiceProvider extends TranslationServiceProvider
             $trans->setFallback($app['config']['app.fallback_locale']);
 
             return $trans;
+        });
+
+        $this->mergeConfigFrom(__DIR__ . '/../config/translations-database.php', 'translation-database');
+
+        $this->app->singleton('dbtrans', function ($app) {
+            return new DbTrans($app);
         });
     }
 
@@ -46,10 +53,15 @@ class DatabaseTranslationsServiceProvider extends TranslationServiceProvider
     public function boot()
     {
         if ($this->app->runningInConsole()) {
-            $destination = database_path('migrations/' . date('Y_m_d_His', time()) . '_create_database_language_items_table.php');
+            $destination = database_path('migrations/' . date('Y_m_d_His',
+                    time()) . '_create_database_language_items_table.php');
             $this->publishes([
                 __DIR__ . '/database/migrations/create_database_language_items_table.php.stub' => $destination,
             ], 'migrations');
+
+            $this->publishes([
+                __DIR__ . '/../config/translations-database.php' => config_path('translations-database.php'),
+            ]);
         }
     }
 }
