@@ -1,3 +1,5 @@
+[![run-tests](https://github.com/MortenDHansen/laravel-database-translations/actions/workflows/run-tests.yml/badge.svg?branch=main)](https://github.com/MortenDHansen/laravel-database-translations/actions/workflows/run-tests.yml)
+
 # laravel-database-translations
 
 **Laravel translations managed in database**
