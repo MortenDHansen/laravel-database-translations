@@ -1,6 +1,16 @@
 {
   "name": "mortendhansen/laravel-database-translations",
   "description": "Managing laravel translations in database",
+  "keywords": [
+    "laravel",
+    "translations",
+    "language",
+    "database",
+    "internationalization",
+    "locale",
+    "localization",
+    "i18n"
+  ],
   "type": "library",
   "license": "MIT",
   "authors": [
@@ -11,14 +21,14 @@
   ],
   "require": {
     "php": "^8.0",
-    "illuminate/support": "^9.0"
+    "illuminate/support": "^8.0|^9.0"
   },
   "support": {
     "issues": "https://github.com/MortenDHansen/laravel-database-translations/issues",
     "source": "https://github.com/MortenDHansen/laravel-database-translations"
   },
   "require-dev": {
-    "orchestra/testbench": "^7.0",
+    "orchestra/testbench": "^6.0|^7.0",
     "phpunit/phpunit": "^9.5"
   },
   "autoload": {
