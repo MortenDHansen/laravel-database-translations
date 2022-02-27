@@ -1,6 +1,16 @@
 {
   "name": "mortendhansen/laravel-database-translations",
   "description": "Managing laravel translations in database",
+  "keywords": [
+    "laravel",
+    "translations",
+    "language",
+    "database",
+    "internationalization",
+    "locale",
+    "localization",
+    "i18n"
+  ],
   "type": "library",
   "license": "MIT",
   "authors": [
