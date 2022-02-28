@@ -3,6 +3,7 @@
 namespace MortenDHansen\LaravelDatabaseTranslations\Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Validator;
 use MortenDHansen\LaravelDatabaseTranslations\DatabaseTranslationsLoader;
 use MortenDHansen\LaravelDatabaseTranslations\Facades\DbTrans;
 use MortenDHansen\LaravelDatabaseTranslations\Models\DatabaseLangItem;
@@ -17,15 +18,68 @@ class DatabaseTranslationsTest extends \MortenDHansen\LaravelDatabaseTranslation
      */
     public function itLoadsTranslationFromDatabase()
     {
-        $this->addTranslationFile(['salad' => 'blue']);
-        $dbTranslation = DatabaseLangItem::factory()->create([
-            'group' => '*',
-            'key' => 'salad',
-            'value' => 'green',
+        DatabaseLangItem::factory()->create([
+            'group'  => '*',
+            'key'    => 'salad',
+            'value'  => 'green',
             'locale' => 'en'
         ]);
 
         $this->assertEquals('green', __('salad'));
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function loadGroupedTranslationFromDatabase()
+    {
+        DatabaseLangItem::factory()->create([
+            'group'  => 'food',
+            'key'    => 'salad',
+            'value'  => 'green',
+            'locale' => 'en'
+        ]);
+        $this->assertEquals('green', __('food.salad'));
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function databaseTranslationsOverrideFiles()
+    {
+        $this->addPhpTranslationFile(['salad' => 'green'], 'food', 'en');
+        DatabaseLangItem::create([
+            'group'  => 'food',
+            'key'    => 'salad',
+            'value'  => 'blue',
+            'locale' => 'en'
+        ]);
+        $this->assertEquals('blue', __('food.salad'));
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function itOverridesLaravelsRuleArrays()
+    {
+        DatabaseLangItem::create([
+            'group'  => 'validation',
+            'key'    => 'gt',
+            'value'  => serialize([
+                'array'   => 'From DB The :attribute must have more than :value items.',
+                'file'    => 'From DB The :attribute must be greater than :value kilobytes.',
+                'numeric' => 'From DB The :attribute must be greater than :value.',
+                'string'  => 'From DB The :attribute must be greater than :value characters.',
+            ]),
+            'locale' => 'en'
+        ]);
+
+        $validate = Validator::make(['value' => 1], ['value' => 'gt:100'])->getMessageBag()->toArray();
+        $this->assertIsArray($validate);
+        $this->assertEquals('From DB The value must be greater than 100.', $validate['value'][0]);
     }
 
     /**
@@ -37,9 +91,9 @@ class DatabaseTranslationsTest extends \MortenDHansen\LaravelDatabaseTranslation
         $this->addTranslationFile(['salad' => 'blue']);
         $this->addTranslationFile(['salad' => 'schwarz'], 'de');
         DatabaseLangItem::factory()->create([
-            'group' => '*',
-            'key' => 'salad',
-            'value' => 'green',
+            'group'  => '*',
+            'key'    => 'salad',
+            'value'  => 'green',
             'locale' => 'en'
         ]);
         DatabaseLangItem::factory()->create([

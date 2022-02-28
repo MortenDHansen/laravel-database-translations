@@ -6,6 +6,8 @@ use MortenDHansen\LaravelDatabaseTranslations\DatabaseTranslationsServiceProvide
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
+    public array $addedFiles = [];
+
     /**
      * @return void
      */
@@ -16,6 +18,10 @@ class TestCase extends \Orchestra\Testbench\TestCase
             if (is_file($file)) {
                 unlink($file);
             }
+        }
+
+        foreach ($this->addedFiles as $file) {
+            unlink($file);
         }
     }
 
@@ -78,6 +84,21 @@ class TestCase extends \Orchestra\Testbench\TestCase
             $content = [];
         }
         file_put_contents(__DIR__ . '/lang/' . $locale . '.json', json_encode($content));
+    }
+
+    public function addPhpTranslationFile(array $content, $group, $locale = 'en')
+    {
+        if (is_null($content)) {
+            $content = [];
+        }
+        $output = "<?php " . PHP_EOL . "return [" . PHP_EOL;
+        foreach ($content as $key => $value) {
+            $output .= sprintf("'%s' => '%s',", $key, $value) . PHP_EOL;
+        }
+        $output .= '];';
+
+        file_put_contents(__DIR__ . '/lang/' . $locale . '/' . $group . '.php', $output);
+        $this->addedFiles[] = __DIR__ . '/lang/' . $locale . '/' . $group . '.php';
     }
 
 }
