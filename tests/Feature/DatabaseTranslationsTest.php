@@ -62,6 +62,26 @@ class DatabaseTranslationsTest extends \MortenDHansen\LaravelDatabaseTranslation
      * @test
      * @return void
      */
+    public function changesToOverrideTakesImmidiateEffect()
+    {
+        __('animal');
+        $this->assertDatabaseHas('database_lang_items', ['group' => '*', 'locale' => 'en', 'key' => 'animal']);
+
+        $record = DatabaseLangItem::where('group', '*')->where('locale', 'en')->where('key', 'animal')->first();
+        $this->assertNull($record->value);
+
+        $record->value = 'bird';
+        $record->save();
+        $this->assertDatabaseHas('database_lang_items',
+            ['group' => '*', 'locale' => 'en', 'key' => 'animal', 'value' => 'bird']);
+
+        $this->assertEquals('bird', __('animal'));
+    }
+
+    /**
+     * @test
+     * @return void
+     */
     public function databaseTranslationsOverrideFilesUnlessDatabaseHasNoValue()
     {
         $this->addPhpTranslationFile(['salad' => 'green'], 'food', 'en');

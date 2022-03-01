@@ -31,7 +31,15 @@ The key will be created in the table for the current locale. So, if you have vis
 will update the table whenever the key is encountered and found missing.
 
 If you have an en.json that sets `{"animal":"bird"}`, the result of the above will be 'bird'. You may now override that
-in the database.
+in the database by simply updating the record with:
+
+```php
+$record = DatabaseLangItem::where('locale', 'en')->where('group', '*')->where('key', 'animal')->first();
+$record->value = 'giraffe';
+$record->save();
+```
+
+now result of `__('animal')` is giraffe.
 
 ## Installation
 
@@ -56,5 +64,4 @@ Now you need to replace the laravel TranslationServiceProvider with the service 
 ## Remarks
 
 - Of course getting, and writing language keys whenever they appear is quite a heavy load of you have many of them.
-  Therefore the package caches the keys. When cache is cold, the pages may be quite slow for the first couple of
-  requests.
+  Therefore the package caches the keys. When cache is cold, the pages may be quite slow.
