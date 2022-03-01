@@ -15,9 +15,9 @@ class DatabaseTranslationsLoader implements Loader
             ->get()
             ->mapWithKeys(function (DatabaseLangItem $langItem) {
                 $result = [$langItem->key => $langItem->value];
-                if (is_array(unserialize($langItem->value))) {
+                if (is_array(json_decode($langItem->value, true))) {
                     $result = [];
-                    foreach (unserialize($langItem->value) as $subKey => $subValue) {
+                    foreach (json_decode($langItem->value, true) as $subKey => $subValue) {
                         $result[$langItem->key . '.' . $subKey] = $subValue;
                     }
                 }
