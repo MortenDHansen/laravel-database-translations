@@ -2,7 +2,7 @@
 
 namespace MortenDHansen\LaravelDatabaseTranslations;
 
-use MortenDHansen\LaravelDatabaseTranslations\Models\DatabaseLangItem;
+use MortenDHansen\LaravelDatabaseTranslations\Facades\DbTrans;
 
 class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
 {
@@ -78,20 +78,7 @@ class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
 
     public function createMissingKey($group, $item, $locale)
     {
-        /** @var DatabaseLangItem $langItem */
-        $langItem = DatabaseLangItem::firstOrCreate([
-            'group'  => $group,
-            'key'    => $item,
-            'locale' => $locale,
-        ], [
-            'value' => null
-        ]);
-
-        if (!$langItem->wasRecentlyCreated) {
-            // it was already there!
-            // ToDo Handle Laravels validation custom attribute calls
-            // ToDo Handle Array updates
-        }
+        DbTrans::createLanguageItem($group, $item, $locale);
         $this->loaded = [];
         $this->loadedFromDb = [];
     }

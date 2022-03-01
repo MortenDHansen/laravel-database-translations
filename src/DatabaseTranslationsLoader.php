@@ -3,26 +3,14 @@
 namespace MortenDHansen\LaravelDatabaseTranslations;
 
 use Illuminate\Contracts\Translation\Loader;
-use MortenDHansen\LaravelDatabaseTranslations\Models\DatabaseLangItem;
+use MortenDHansen\LaravelDatabaseTranslations\Facades\DbTrans;
 
 class DatabaseTranslationsLoader implements Loader
 {
 
     public function load($locale, $group, $namespace = null)
     {
-        return DatabaseLangItem::where('locale', $locale)
-            ->where('group', $group)
-            ->get()
-            ->mapWithKeys(function (DatabaseLangItem $langItem) {
-                $result = [$langItem->key => $langItem->value];
-                if (is_array(json_decode($langItem->value, true))) {
-                    $result = [];
-                    foreach (json_decode($langItem->value, true) as $subKey => $subValue) {
-                        $result[$langItem->key . '.' . $subKey] = $subValue;
-                    }
-                }
-                return $result;
-            })->toArray();
+        return DbTrans::getDatabaseTranslations($group, $locale);
     }
 
     public function addNamespace($namespace, $hint)

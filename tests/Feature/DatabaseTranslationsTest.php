@@ -84,6 +84,19 @@ class DatabaseTranslationsTest extends \MortenDHansen\LaravelDatabaseTranslation
      * @test
      * @return void
      */
+    public function itAllowsCustomValidationMessages()
+    {
+        $validate = Validator::make(['value' => 1], ['value' => 'gt:100'], [
+            'gt' => 'CRAP'
+        ])->getMessageBag()->toArray();
+        $this->assertIsArray($validate);
+        $this->assertEquals('CRAP', $validate['value'][0]);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
     public function itCreatesMissingKey()
     {
         __('salad');
