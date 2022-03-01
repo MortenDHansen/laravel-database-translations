@@ -62,6 +62,22 @@ class DatabaseTranslationsTest extends \MortenDHansen\LaravelDatabaseTranslation
      * @test
      * @return void
      */
+    public function databaseTranslationsOverrideFilesUnlessDatabaseHasNoValue()
+    {
+        $this->addPhpTranslationFile(['salad' => 'green'], 'food', 'en');
+        DatabaseLangItem::create([
+            'group'  => 'food',
+            'key'    => 'salad',
+            'value'  => null,
+            'locale' => 'en'
+        ]);
+        $this->assertEquals('green', __('food.salad'));
+    }
+
+    /**
+     * @test
+     * @return void
+     */
     public function itOverridesLaravelsRuleArrays()
     {
         DatabaseLangItem::create([

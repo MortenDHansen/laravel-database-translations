@@ -103,7 +103,10 @@ class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
         $lines = app('translation.loader')->load($locale, $group, $namespace);
         $fileLines = app('translation.file-loader')->load($locale, $group, $namespace);
 
-        $this->loaded[$namespace][$group][$locale] = array_merge($fileLines, $lines);
         $this->loadedFromDb[$namespace][$group][$locale] = $lines;
+        $cleanedLines = array_filter($lines, function ($value, $key) {
+            return !is_null($value);
+        }, ARRAY_FILTER_USE_BOTH);
+        $this->loaded[$namespace][$group][$locale] = array_merge($fileLines, $cleanedLines);
     }
 }
