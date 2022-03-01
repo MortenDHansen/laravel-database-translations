@@ -26,7 +26,6 @@ class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
 
         // load basic translations (json files / ungrouped and non namespaced translations)
         $this->load('*', '*', $locale);
-
         // Check if translation is found.
         $group = '*';
         $line = $this->loaded['*'][$group][$locale][$key] ?? null;
@@ -52,7 +51,7 @@ class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
                 );
                 if (!is_null($line)) {
                     // We need to create the missing key a bit early in case we are exiting the get method here
-                    if (!isset($this->loadedFromDb['*'][$group][$passedLocale][$item])) {
+                    if (!array_key_exists($item, $this->loadedFromDb['*'][$group][$passedLocale])) {
                         $this->createMissingKey($group, $item, $locale);
                     }
                     return $line;
@@ -66,7 +65,7 @@ class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
             $group = '*';
         }
 
-        if (!isset($this->loadedFromDb['*'][$group][$passedLocale][$item])) {
+        if (!array_key_exists($item, $this->loadedFromDb['*'][$group][$passedLocale])) {
             $this->createMissingKey($group, $item, $passedLocale);
         }
 

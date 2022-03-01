@@ -4,6 +4,7 @@ namespace MortenDHansen\LaravelDatabaseTranslations\Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Validator;
+use MortenDHansen\LaravelDatabaseTranslations\Facades\DbTrans;
 use MortenDHansen\LaravelDatabaseTranslations\Models\DatabaseLangItem;
 
 class DatabaseTranslationsTest extends \MortenDHansen\LaravelDatabaseTranslations\Tests\TestCase
@@ -111,6 +112,17 @@ class DatabaseTranslationsTest extends \MortenDHansen\LaravelDatabaseTranslation
     {
         __('food.salad');
         $this->assertDatabaseHas('database_lang_items', ['group' => 'food', 'locale' => 'en', 'key' => 'salad']);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function itCreatesAndCachesMissingGroupedKey()
+    {
+        __('food.salad');
+        $this->assertDatabaseHas('database_lang_items', ['group' => 'food', 'locale' => 'en', 'key' => 'salad']);
+        cache()->has(DbTrans::getCacheKey('good', 'en'));
     }
 
     /**
