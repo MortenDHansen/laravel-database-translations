@@ -48,13 +48,8 @@ class DbTrans
 
         if (!$langItem->wasRecentlyCreated) {
             // it was already there!
-            // ToDo Handle Laravels validation custom attribute calls
+            // ToDo Handle Laravels validation custom attribute calls @see \Illuminate\Validation\Concerns\FormatsMessages::getCustomMessageFromTranslator
             // ToDo Handle Array updates
-        }
-
-        if ($langItem->wasRecentlyCreated) {
-            cache()->forget(DbTrans::getCacheKey($group, $locale));
-            DbTrans::getDatabaseTranslations($group, $locale);
         }
 
         return $langItem;
