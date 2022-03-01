@@ -8,6 +8,7 @@ use MortenDHansen\LaravelDatabaseTranslations\database\Factories\DatabaseLangIte
 class DatabaseLangItem extends \Illuminate\Database\Eloquent\Model
 {
     use HasFactory;
+
     protected $fillable = [
         'group',
         'key',
@@ -20,19 +21,19 @@ class DatabaseLangItem extends \Illuminate\Database\Eloquent\Model
         return DatabaseLangItemFactory::new();
     }
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::created(function ($model) {
-            cache()->forget(app('dbtrans')->getCacheKey($model->group, $model->locale));
-            app('dbtrans')->getDatabaseTranslations($model->group, $model->locale);
-        });
-
-        static::updated(function ($model) {
-            cache()->forget(app('dbtrans')->getCacheKey($model->group, $model->locale));
-            app('dbtrans')->getDatabaseTranslations($model->group, $model->locale);
-        });
-    }
+//    protected static function boot()
+//    {
+//        parent::boot();
+//
+////        static::created(function ($model) {
+////            cache()->forget(app('dbtrans')->getCacheKey($model->group, $model->locale));
+////            app('dbtrans')->getDatabaseTranslations($model->group, $model->locale);
+////        });
+////
+////        static::updated(function ($model) {
+////            cache()->forget(app('dbtrans')->getCacheKey($model->group, $model->locale));
+////            app('dbtrans')->getDatabaseTranslations($model->group, $model->locale);
+////        });
+//    }
 }
 

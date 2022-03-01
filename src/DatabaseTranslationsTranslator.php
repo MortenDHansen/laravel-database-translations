@@ -2,16 +2,21 @@
 
 namespace MortenDHansen\LaravelDatabaseTranslations;
 
+use MortenDHansen\LaravelDatabaseTranslations\Facades\DbTrans;
+
 class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
 {
+
+    public array $loadedFromDb = [];
+
 
     /**
      * Get the translation for the given key.
      *
-     * @param  string  $key
-     * @param  array  $replace
-     * @param  string|null  $locale
-     * @param  bool  $fallback
+     * @param string $key
+     * @param array $replace
+     * @param string|null $locale
+     * @param bool $fallback
      * @return string|array
      */
     public function get($key, array $replace = [], $locale = null, $fallback = true)
@@ -19,42 +24,49 @@ class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
         $locale = $locale ?: $this->locale;
         $passedLocale = $locale;
 
-        // For JSON translations, there is only one file per locale, so we will simply load
-        // that file and then we will be ready to check the array for the key. These are
-        // only one level deep so we do not need to do any fancy searching through it.
+        // load basic translations (json files / ungrouped and non namespaced translations)
         $this->load('*', '*', $locale);
-        $line = $this->loaded['*']['*'][$locale][$key] ?? null;
+        // Check if translation is found.
+        $group = '*';
+        $line = $this->loaded['*'][$group][$locale][$key] ?? null;
+
         // If we can't find a translation for the JSON key, we will attempt to translate it
         // using the typical translation file. This way developers can always just use a
         // helper such as __ instead of having to pick between trans or __ with views.
-        if (! isset($line)) {
+        if (!isset($line)) {
             [$namespace, $group, $item] = $this->parseKey($key);
+
             // Here we will get the locale that should be used for the language line. If one
             // was not passed, we will use the default locales which was given to us when
             // the translator was instantiated. Then, we can load the lines and return.
             $locales = $fallback ? $this->localeArray($locale) : [$locale];
+
             foreach ($locales as $locale) {
-                if (! is_null($line = $this->getLine(
-                    $namespace, $group, $locale, $item, $replace
-                ))) {
-                    $dbLoadedKey = array_key_exists($item, $this->loader->dbTranslations[$group][$passedLocale]);
-                    if(!$dbLoadedKey) {
-                        app('dbtrans')->createLanguageItem($group, $item, $passedLocale);
-                        $this->loaded = [];
+                $line = $this->getLine(
+                    $namespace,
+                    $group,
+                    $locale,
+                    $item,
+                    $replace
+                );
+                if (!is_null($line)) {
+                    // We need to create the missing key a bit early in case we are exiting the get method here
+                    if (!array_key_exists($item, $this->loadedFromDb['*'][$group][$passedLocale])) {
+                        $this->createMissingKey($group, $item, $locale);
                     }
                     return $line;
                 }
             }
         }
 
-        if(! isset($item)) {
-            $item = $key;
+        // The key was parsed, item place will be null if key is ungrouped
+        if (!isset($item)) {
+            $item = $group;
             $group = '*';
         }
-        $dbLoadedKey = array_key_exists($item, $this->loader->dbTranslations[$group][$passedLocale]);
-        if(!$dbLoadedKey) {
-            app('dbtrans')->createLanguageItem($group, $item, $passedLocale);
-            $this->loaded = [];
+
+        if (!array_key_exists($item, $this->loadedFromDb['*'][$group][$passedLocale])) {
+            $this->createMissingKey($group, $item, $passedLocale);
         }
 
         // If the line doesn't exist, we will return back the key which was requested as
@@ -63,12 +75,19 @@ class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
         return $this->makeReplacements($line ?: $key, $replace);
     }
 
+    public function createMissingKey($group, $item, $locale)
+    {
+        DbTrans::createLanguageItem($group, $item, $locale);
+        $this->loaded = [];
+        $this->loadedFromDb = [];
+    }
+
     /**
      * Load the specified language group.
      *
-     * @param  string  $namespace
-     * @param  string  $group
-     * @param  string  $locale
+     * @param string $namespace
+     * @param string $group
+     * @param string $locale
      * @return void
      */
     public function load($namespace, $group, $locale)
@@ -80,8 +99,16 @@ class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
         // The loader is responsible for returning the array of language lines for the
         // given namespace, group, and locale. We'll set the lines in this array of
         // lines that have already been loaded so that we can easily access them.
-        $lines = $this->loader->load($locale, $group, $namespace);
 
-        $this->loaded[$namespace][$group][$locale] = $lines;
+        $lines = app('translation.loader')->load($locale, $group, $namespace);
+        $fileLines = app('translation.file-loader')->load($locale, $group, $namespace);
+
+        $this->loadedFromDb[$namespace][$group][$locale] = $lines;
+
+        $cleanedLines = array_filter($lines, function ($value, $key) {
+            return !is_null($value);
+        }, ARRAY_FILTER_USE_BOTH);
+
+        $this->loaded[$namespace][$group][$locale] = array_merge($fileLines, $cleanedLines);
     }
 }

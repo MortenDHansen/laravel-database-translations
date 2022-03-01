@@ -7,18 +7,23 @@ use MortenDHansen\LaravelDatabaseTranslations\Models\DatabaseLangItem;
 
 class DbTrans
 {
-    public function getDatabaseTranslations(string $group, string $locale): array
+    public static function getDatabaseTranslations(string $group, string $locale): array
     {
         $cacheKey = app('dbtrans')->getCacheKey($group, $locale);
         return cache()->remember($cacheKey, Carbon::now()->addDay(), function () use ($group, $locale) {
-            $toArray = DatabaseLangItem::where('group', $group)
-                ->where('locale', $locale)
+            return DatabaseLangItem::where('locale', $locale)
+                ->where('group', $group)
                 ->get()
                 ->mapWithKeys(function (DatabaseLangItem $langItem) {
-                    return [$langItem->key => $langItem->value];
-                })
-                ->toArray();
-            return $toArray;
+                    $result = [$langItem->key => $langItem->value];
+                    if (is_array(json_decode($langItem->value, true))) {
+                        $result = [];
+                        foreach (json_decode($langItem->value, true) as $subKey => $subValue) {
+                            $result[$langItem->key . '.' . $subKey] = $subValue;
+                        }
+                    }
+                    return $result;
+                })->toArray();
         });
     }
 
@@ -30,18 +35,28 @@ class DbTrans
         return config('translations-database.cache-prefix') . '.' . $locale . '.' . $group;
     }
 
-    public function createLanguageItem(string $group, string $key, string $locale): DatabaseLangItem
+    public static function createLanguageItem(string $group, string $key, string $locale): DatabaseLangItem
     {
-        /** @var DatabaseLangItem $lineItem */
-        $lineItem = DatabaseLangItem::firstOrCreate([
+        /** @var DatabaseLangItem $langItem */
+        $langItem = DatabaseLangItem::firstOrCreate([
             'group'  => $group,
             'key'    => $key,
             'locale' => $locale,
+        ], [
+            'value' => null
         ]);
-        if ($lineItem->wasRecentlyCreated) {
-            cache()->forget(app('dbtrans')->getCacheKey($group, $locale));
-            app('dbtrans')->getDatabaseTranslations($group, $locale);
+
+        if (!$langItem->wasRecentlyCreated) {
+            // it was already there!
+            // ToDo Handle Laravels validation custom attribute calls
+            // ToDo Handle Array updates
         }
-        return $lineItem;
+
+        if ($langItem->wasRecentlyCreated) {
+            cache()->forget(DbTrans::getCacheKey($group, $locale));
+            DbTrans::getDatabaseTranslations($group, $locale);
+        }
+
+        return $langItem;
     }
 }
