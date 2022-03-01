@@ -4,12 +4,16 @@
   "keywords": [
     "laravel",
     "translations",
+    "translator",
+    "loader",
     "language",
     "database",
     "internationalization",
     "locale",
     "localization",
-    "i18n"
+    "i18n",
+    "translate",
+    "laravel-translation-loader"
   ],
   "type": "library",
   "license": "MIT",
