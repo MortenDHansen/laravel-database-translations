@@ -65,14 +65,4 @@ class BasicTest extends \MortenDHansen\LaravelDatabaseTranslations\Tests\TestCas
         $this->assertDatabaseCount('database_lang_items', 10);
     }
 
-    /**
-     * @test
-     * @return void
-     */
-    public function canUseFacade()
-    {
-        $facade = app('dbtrans');
-        $this->assertInstanceOf(\MortenDHansen\LaravelDatabaseTranslations\Facades\DbTrans::class, $facade);
-    }
-
 }

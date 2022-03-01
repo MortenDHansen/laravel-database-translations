@@ -2,8 +2,6 @@
 
 namespace MortenDHansen\LaravelDatabaseTranslations;
 
-use MortenDHansen\LaravelDatabaseTranslations\Facades\DbTrans;
-
 class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
 {
 

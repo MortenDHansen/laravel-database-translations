@@ -4,7 +4,6 @@ namespace MortenDHansen\LaravelDatabaseTranslations;
 
 use Illuminate\Translation\FileLoader;
 use Illuminate\Translation\TranslationServiceProvider;
-use MortenDHansen\LaravelDatabaseTranslations\Facades\DbTrans;
 
 class DatabaseTranslationsServiceProvider extends TranslationServiceProvider
 {

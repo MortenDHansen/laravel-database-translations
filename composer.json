@@ -43,9 +43,6 @@
     }
   },
   "extra": {
-    "aliases": {
-      "DbTrans": "MortenDHansen\\LaravelDatabaseTranslations\\Facades\\DatabaseTranslationsFacade"
-    }
   },
   "scripts": {
     "test": "vendor/bin/phpunit"

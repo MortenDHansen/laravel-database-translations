@@ -4,7 +4,7 @@ namespace MortenDHansen\LaravelDatabaseTranslations\Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Validator;
-use MortenDHansen\LaravelDatabaseTranslations\Facades\DbTrans;
+use MortenDHansen\LaravelDatabaseTranslations\DbTrans;
 use MortenDHansen\LaravelDatabaseTranslations\Models\DatabaseLangItem;
 
 class DatabaseTranslationsTest extends \MortenDHansen\LaravelDatabaseTranslations\Tests\TestCase
@@ -56,6 +56,26 @@ class DatabaseTranslationsTest extends \MortenDHansen\LaravelDatabaseTranslation
             'locale' => 'en'
         ]);
         $this->assertEquals('blue', __('food.salad'));
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function changesToOverrideTakesImmidiateEffect()
+    {
+        __('animal');
+        $this->assertDatabaseHas('database_lang_items', ['group' => '*', 'locale' => 'en', 'key' => 'animal']);
+
+        $record = DatabaseLangItem::where('group', '*')->where('locale', 'en')->where('key', 'animal')->first();
+        $this->assertNull($record->value);
+
+        $record->value = 'bird';
+        $record->save();
+        $this->assertDatabaseHas('database_lang_items',
+            ['group' => '*', 'locale' => 'en', 'key' => 'animal', 'value' => 'bird']);
+
+        $this->assertEquals('bird', __('animal'));
     }
 
     /**

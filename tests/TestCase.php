@@ -60,6 +60,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
             'driver' => 'file',
             'path' => __DIR__ . '/temp/cache'
         ]);
+
         $app['path.lang'] = __DIR__ . '/lang';
         $app['config']->set('translations-database.cache-prefix', 'laravel-db-translations');
     }
