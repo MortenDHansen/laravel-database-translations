@@ -100,6 +100,27 @@ class DatabaseTranslationsTest extends \MortenDHansen\LaravelDatabaseTranslation
         $this->assertDatabaseHas('database_lang_items', ['group' => 'food', 'locale' => 'en', 'key' => 'salad']);
     }
 
+    /**
+     * @test
+     * @return void
+     */
+    public function itHandlesOtherLanguage()
+    {
+        DatabaseLangItem::factory()->create([
+            'group'  => '*',
+            'key'    => 'salad',
+            'value'  => 'green',
+            'locale' => 'en'
+        ]);
+
+        $this->assertEquals('green', __('salad'));
+
+        app()->setLocale('de');
+        $this->assertEquals('salad', __('salad'));
+
+        $this->assertDatabaseHas('database_lang_items', ['group' => '*', 'locale' => 'de', 'key' => 'salad']);
+    }
+
 //
 //    /**
 //     * @test

@@ -28,11 +28,8 @@ class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
         $this->load('*', '*', $locale);
 
         // Check if translation is found.
-        $line = $this->loaded['*']['*'][$locale][$key] ?? null;
-
-        if (!is_null($line)) {
-            $this->createMissingKey('*', $key, $locale);
-        }
+        $group = '*';
+        $line = $this->loaded['*'][$group][$locale][$key] ?? null;
 
         // If we can't find a translation for the JSON key, we will attempt to translate it
         // using the typical translation file. This way developers can always just use a
@@ -54,18 +51,24 @@ class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
                     $replace
                 );
                 if (!is_null($line)) {
-                    $this->createMissingKey($group, $item, $locale);
+                    // We need to create the missing key a bit early in case we are exiting the get method here
+                    if (!isset($this->loadedFromDb['*'][$group][$passedLocale][$item])) {
+                        $this->createMissingKey($group, $item, $locale);
+                    }
                     return $line;
                 }
             }
         }
 
         // The key was parsed, item place will be null if key is ungrouped
-        if (is_null($item)) {
+        if (!isset($item)) {
             $item = $group;
             $group = '*';
         }
-        $this->createMissingKey($group, $item, $passedLocale);
+
+        if (!isset($this->loadedFromDb['*'][$group][$passedLocale][$item])) {
+            $this->createMissingKey($group, $item, $passedLocale);
+        }
 
         // If the line doesn't exist, we will return back the key which was requested as
         // that will be quick to spot in the UI if language keys are wrong or missing
@@ -75,12 +78,20 @@ class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
 
     public function createMissingKey($group, $item, $locale)
     {
-        DatabaseLangItem::create([
+        /** @var DatabaseLangItem $langItem */
+        $langItem = DatabaseLangItem::firstOrCreate([
             'group'  => $group,
             'key'    => $item,
             'locale' => $locale,
-            'value'  => null
+        ], [
+            'value' => null
         ]);
+
+        if (!$langItem->wasRecentlyCreated) {
+            // it was already there!
+            // ToDo Handle Laravels validation custom attribute calls
+            // ToDo Handle Array updates
+        }
         $this->loaded = [];
         $this->loadedFromDb = [];
     }
