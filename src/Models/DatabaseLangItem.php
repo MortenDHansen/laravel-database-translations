@@ -2,6 +2,7 @@
 
 namespace MortenDHansen\LaravelDatabaseTranslations\Models;
 
+use Cache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use MortenDHansen\LaravelDatabaseTranslations\database\Factories\DatabaseLangItemFactory;
 use MortenDHansen\LaravelDatabaseTranslations\Facades\DbTrans;
@@ -27,12 +28,14 @@ class DatabaseLangItem extends \Illuminate\Database\Eloquent\Model
         parent::boot();
 
         static::created(function ($model) {
-            cache()->forget(DbTrans::getCacheKey($model->group, $model->locale));
+            Cache::driver(config('translations-database.cache-driver'))->forget(DbTrans::getCacheKey($model->group,
+                $model->locale));
             DbTrans::getDatabaseTranslations($model->group, $model->locale);
         });
 
         static::updated(function ($model) {
-            cache()->forget(DbTrans::getCacheKey($model->group, $model->locale));
+            Cache::driver(config('translations-database.cache-driver'))->forget(DbTrans::getCacheKey($model->group,
+                $model->locale));
             DbTrans::getDatabaseTranslations($model->group, $model->locale);
         });
     }

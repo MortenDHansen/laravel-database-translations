@@ -9,18 +9,19 @@ class DbTrans
 {
     public static function getDatabaseTranslations(string $group, string $locale): array
     {
-        $cacheKey = app('dbtrans')->getCacheKey($group, $locale);
-        return cache()->remember($cacheKey, Carbon::now()->addDay(), function () use ($group, $locale) {
-            return DatabaseLangItem::where('locale', $locale)
-                ->where('group', $group)
-                ->get()
-                ->mapWithKeys(function (DatabaseLangItem $langItem) {
-                    $result = [$langItem->key => $langItem->value];
-                    if (is_array(json_decode($langItem->value, true))) {
-                        $result = [];
-                        foreach (json_decode($langItem->value, true) as $subKey => $subValue) {
-                            $result[$langItem->key . '.' . $subKey] = $subValue;
-                        }
+        $cacheKey = DbTrans::getCacheKey($group, $locale);
+        return \Cache::driver(config('translations-database.cache-driver'))->remember($cacheKey,
+            Carbon::now()->addDay(), function () use ($group, $locale) {
+                return DatabaseLangItem::where('locale', $locale)
+                    ->where('group', $group)
+                    ->get()
+                    ->mapWithKeys(function (DatabaseLangItem $langItem) {
+                        $result = [$langItem->key => $langItem->value];
+                        if (is_array(json_decode($langItem->value, true))) {
+                            $result = [];
+                            foreach (json_decode($langItem->value, true) as $subKey => $subValue) {
+                                $result[$langItem->key . '.' . $subKey] = $subValue;
+                            }
                     }
                     return $result;
                 })->toArray();
