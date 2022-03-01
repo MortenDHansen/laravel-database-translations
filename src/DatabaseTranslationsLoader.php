@@ -3,7 +3,6 @@
 namespace MortenDHansen\LaravelDatabaseTranslations;
 
 use Illuminate\Contracts\Translation\Loader;
-use MortenDHansen\LaravelDatabaseTranslations\Facades\DbTrans;
 
 class DatabaseTranslationsLoader implements Loader
 {

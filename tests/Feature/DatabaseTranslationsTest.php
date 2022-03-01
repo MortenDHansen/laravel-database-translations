@@ -4,7 +4,7 @@ namespace MortenDHansen\LaravelDatabaseTranslations\Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Validator;
-use MortenDHansen\LaravelDatabaseTranslations\Facades\DbTrans;
+use MortenDHansen\LaravelDatabaseTranslations\DbTrans;
 use MortenDHansen\LaravelDatabaseTranslations\Models\DatabaseLangItem;
 
 class DatabaseTranslationsTest extends \MortenDHansen\LaravelDatabaseTranslations\Tests\TestCase

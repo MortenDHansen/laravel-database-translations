@@ -5,7 +5,7 @@ namespace MortenDHansen\LaravelDatabaseTranslations\Models;
 use Cache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use MortenDHansen\LaravelDatabaseTranslations\database\Factories\DatabaseLangItemFactory;
-use MortenDHansen\LaravelDatabaseTranslations\Facades\DbTrans;
+use MortenDHansen\LaravelDatabaseTranslations\DbTrans;
 
 class DatabaseLangItem extends \Illuminate\Database\Eloquent\Model
 {

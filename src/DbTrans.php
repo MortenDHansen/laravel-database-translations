@@ -1,9 +1,11 @@
 <?php
 
-namespace MortenDHansen\LaravelDatabaseTranslations\Facades;
+namespace MortenDHansen\LaravelDatabaseTranslations;
 
 use Carbon\Carbon;
 use MortenDHansen\LaravelDatabaseTranslations\Models\DatabaseLangItem;
+
+use function config;
 
 class DbTrans
 {
