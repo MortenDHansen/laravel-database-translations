@@ -182,6 +182,34 @@ class DatabaseTranslationsTest extends \MortenDHansen\LaravelDatabaseTranslation
         $this->assertDatabaseHas('database_lang_items', ['group' => '*', 'locale' => 'de', 'key' => 'salad']);
     }
 
+    /**
+     * @test
+     * @return void
+     */
+    public function commandRebuildsCache()
+    {
+        // create translations in two languages
+        __('salad.tomato');
+        __('burger');
+
+        app()->setLocale('de');
+
+        __('salad.tomato');
+        __('pasta');
+
+        // Change content of a translation without triggering events (should not be cached)
+        DatabaseLangItem::where('locale', 'de')->where('key', 'tomato')->update(['value' => 'schnitzel']);
+        $this->assertTrue(\Cache::has(DbTrans::getCacheKey('salad', 'de')));
+        $this->assertNull(\Cache::get(DbTrans::getCacheKey('salad', 'de'))['tomato']);
+        $this->assertDatabaseHas('database_lang_items',
+            ['group' => 'salad', 'locale' => 'de', 'key' => 'tomato', 'value' => 'schnitzel']);
+
+        // rebuild cache - now cache should be aligned with db
+        $this->artisan('dbtrans:cache-rebuild');
+        $this->assertTrue(\Cache::has(DbTrans::getCacheKey('salad', 'de')));
+        $this->assertEquals('schnitzel', \Cache::get(DbTrans::getCacheKey('salad', 'de'))['tomato']);
+    }
+
 //
 //    /**
 //     * @test
