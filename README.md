@@ -60,7 +60,6 @@ Now you need to replace the laravel TranslationServiceProvider with the service 
 // Illuminate\Translation\TranslationServiceProvider::class, 
 ```
 
-## Remarks
-
-- Of course getting, and writing language keys whenever they appear is quite a heavy load of you have many of them.
-  Therefore the package caches the keys. When cache is cold, the pages may be quite slow.
+## Caching
+Of course getting, and writing language keys whenever they appear is quite a heavy load of you have many of them.
+Therefore the package caches the keys. When cache is cold, the pages may be quite slow. You can use the artisan command `"dbtrans:cache-rebuild` to drop keys and rebuild from table. 
