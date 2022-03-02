@@ -4,6 +4,7 @@ namespace MortenDHansen\LaravelDatabaseTranslations;
 
 use Illuminate\Translation\FileLoader;
 use Illuminate\Translation\TranslationServiceProvider;
+use MortenDHansen\LaravelDatabaseTranslations\Console\DatabaseTranslationsCacheCommand;
 
 class DatabaseTranslationsServiceProvider extends TranslationServiceProvider
 {
@@ -60,6 +61,10 @@ class DatabaseTranslationsServiceProvider extends TranslationServiceProvider
 
             $this->publishes([
                 __DIR__ . '/../config/translations-database.php' => config_path('translations-database.php'),
+            ]);
+
+            $this->commands([
+                DatabaseTranslationsCacheCommand::class
             ]);
         }
     }

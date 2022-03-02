@@ -59,7 +59,7 @@ class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
 
         // The key was parsed, item place will be null if key is ungrouped
         if (!isset($item)) {
-            $item = $group;
+            $item = $group == '*' ? $key : $group;
             $group = '*';
         }
 
@@ -75,6 +75,10 @@ class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
 
     public function createMissingKey($group, $item, $locale)
     {
+        // That's not a key
+        if ($item === '*') {
+            return;
+        }
         DbTrans::createLanguageItem($group, $item, $locale);
         $this->loaded = [];
         $this->loadedFromDb = [];
