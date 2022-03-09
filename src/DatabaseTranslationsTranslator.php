@@ -63,6 +63,12 @@ class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
             $group = '*';
         }
 
+        // The group should be just a word. Sometimes translation key is an entire paragraph. We put that into ungrouped
+        if (!(preg_match('/^[\pL\pM\pN_-]+$/u', $group) > 0)) {
+            $group = '*';
+            $item = $key;
+        }
+
         if (!array_key_exists($item, $this->loadedFromDb['*'][$group][$passedLocale])) {
             $this->createMissingKey($group, $item, $passedLocale);
         }

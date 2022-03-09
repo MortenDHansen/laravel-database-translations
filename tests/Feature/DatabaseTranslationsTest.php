@@ -354,5 +354,15 @@ class DatabaseTranslationsTest extends \MortenDHansen\LaravelDatabaseTranslation
         $this->assertDatabaseHas('database_lang_items', ['group' => '*', 'key' => 'color', 'locale' => 'de']);
     }
 
+    /**
+     * @test
+     * @return void
+     */
+    public function itCanHandleChunksOfText()
+    {
+        __("Sometimes, translations are in fact a chunk of text. It can be very long and it makes no sense to treat it as a grouped key.");
+        $this->assertEquals('*', DatabaseLangItem::all()->first()->group);
+    }
+
 
 }
