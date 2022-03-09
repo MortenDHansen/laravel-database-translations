@@ -360,8 +360,10 @@ class DatabaseTranslationsTest extends \MortenDHansen\LaravelDatabaseTranslation
      */
     public function itCanHandleChunksOfText()
     {
-        __("Sometimes, translations are in fact a chunk of text. It can be very long and it makes no sense to treat it as a grouped key.");
+        $str = "Sometimes, translations are in fact a chunk of text. It can be very long and it makes no sense to treat it as a grouped key.";
+        __($str);
         $this->assertEquals('*', DatabaseLangItem::all()->first()->group);
+        $this->assertEquals($str, DatabaseLangItem::all()->first()->key);
     }
 
 
