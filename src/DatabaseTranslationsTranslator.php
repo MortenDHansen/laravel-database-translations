@@ -19,6 +19,7 @@ class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
      */
     public function get($key, array $replace = [], $locale = null, $fallback = true)
     {
+        $originalCasing = $key;
         $key = strtolower($key);
         $locale = $locale ?: $this->locale;
         $passedLocale = $locale;
@@ -77,7 +78,7 @@ class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
         // If the line doesn't exist, we will return back the key which was requested as
         // that will be quick to spot in the UI if language keys are wrong or missing
         // from the application's language files. Otherwise we can return the line.
-        return $this->makeReplacements($line ?: $key, $replace);
+        return $this->makeReplacements($line ?: $originalCasing, $replace);
     }
 
     public function createMissingKey($group, $item, $locale)
