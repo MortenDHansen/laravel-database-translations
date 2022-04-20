@@ -19,6 +19,7 @@ class DatabaseTranslationsTranslator extends \Illuminate\Translation\Translator
      */
     public function get($key, array $replace = [], $locale = null, $fallback = true)
     {
+        $key = strtolower($key);
         $locale = $locale ?: $this->locale;
         $passedLocale = $locale;
 
